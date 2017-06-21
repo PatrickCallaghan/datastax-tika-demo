@@ -15,4 +15,13 @@ To run the document loader, run
 	mvn clean compile exec:java -Dexec.mainClass="com.datastax.tika.Main"  -DcontactPoints=localhost 
 	
 This will process all the files in the src/main/resources/files directory. 
+
+To query the data in DSE, use cqlsh and run
+
+	select * from tika.metadata
 	
+You can use the solr admin ui at 
+
+	http://localhost:8983/solr
+	
+
