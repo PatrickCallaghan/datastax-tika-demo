@@ -1,6 +1,6 @@
 DSE Document MetaData Search using Tika
 ================================================
-This demo will load all the documents in a directory into DSE while extracting the metadata for indexing into DSE Search. 
+This demo will load all the documents in a directory into DSE while extracting the metadata for indexing into DSE Search. It will also look in the links.txt to search for links that it can index. If it finds a github repository, it will index the README.md file.
 
 To create the schema, run the following
 
