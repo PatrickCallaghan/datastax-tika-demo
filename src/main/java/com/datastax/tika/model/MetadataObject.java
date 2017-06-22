@@ -41,6 +41,7 @@ public class MetadataObject {
 	@Column(name="content_type")
 	private String contentType;
 	
+	private String type;
 	private String link;
 	private List<String> tags;
 	private String content;
@@ -108,6 +109,10 @@ public class MetadataObject {
 	public void setLink(String link) {
 		this.link = link;
 	}
-	
-	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 }

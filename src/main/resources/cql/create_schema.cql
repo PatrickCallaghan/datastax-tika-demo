@@ -11,6 +11,7 @@ encrypted boolean,
 content_type text,
 tags list<text>,
 link text, 
+type text,
 content text,
 md_ map<text,text>
 );

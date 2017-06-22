@@ -2,15 +2,20 @@ package com.datastax.tika;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.datastax.demo.utils.FileUtils;
 import com.datastax.demo.utils.Timer;
 import com.datastax.tika.model.MetadataObject;
 import com.datastax.tika.service.MetadataService;
@@ -32,25 +37,36 @@ public class Main {
 		// Do something here.
 		// For all docs
 
-		List<File> files = listf("src/main/resources/files");
-		
+//		List<File> files = listf("src/main/resources/files");
+//			
+//		for (File file : files) {
+//			if (file.isDirectory()){
+//				continue;
+//			}
+//			
+//			logger.info("Processing " + file.getAbsolutePath());
+//			try {
+//				MetadataObject metadata = service.processFile(file);
+//				service.insertMetadataObject(metadata);
+//			
+//			} catch (IOException | SAXException | TikaException e) {
+//				e.printStackTrace();
+//			}
+//		}
 
+		List<String> list = FileUtils.readFileIntoList("links.txt");
+		Set<String> set = new HashSet(list); //Remove duplicates
 		
-		for (File file : files) {
-			if (file.isDirectory()){
-				continue;
-			}
-			
-			logger.info("Processing " + file.getAbsolutePath());
+		for (String url : set){
 			try {
-				MetadataObject metadata = service.processFile(file);
+				MetadataObject metadata = service.processLink(new URL(url));
 				service.insertMetadataObject(metadata);
 			
-			} catch (IOException | SAXException | TikaException e) {
+			} catch (IOException | SAXException | TikaException | URISyntaxException e) {
 				e.printStackTrace();
-			}
+			} 
 		}
-
+		
 		timer.end();
 		logger.info("Test took " + timer.getTimeTakenSeconds() + " secs.");
 		System.exit(0);
