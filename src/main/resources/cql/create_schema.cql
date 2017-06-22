@@ -9,7 +9,8 @@ last_modified timestamp,
 version double, 
 encrypted boolean,
 content_type text,
-tags list<text>, 
+tags list<text>,
+link text, 
 content text,
 md_ map<text,text>
 );

@@ -37,7 +37,7 @@ public class MetadataService {
 
 	public MetadataObject processFile(File file) throws IOException, SAXException, TikaException {
 		
-		BodyContentHandler handler = new BodyContentHandler();	 
+		BodyContentHandler handler = new BodyContentHandler(-1);	 
 	    AutoDetectParser parser = new AutoDetectParser();
 	    Metadata metadata = new Metadata();
 	    MetadataObject metadataObject = new MetadataObject();
@@ -51,6 +51,7 @@ public class MetadataService {
 	        metadataObject.setDocumentId(UUID.randomUUID().toString());
 	        metadataObject.setVersion(Double.parseDouble(metadata.get("pdf:PDFVersion") != null ? metadata.get("pdf:PDFVersion") : "0"));
 	        metadataObject.setContent(handler.toString());
+	        metadataObject.setLink(file.getAbsolutePath());
 	        
 	        Map<String, String> metadataMap = new HashMap<String,String>();
 	        for (String name : metadata.names()){

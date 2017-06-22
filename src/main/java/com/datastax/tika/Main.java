@@ -2,6 +2,7 @@ package com.datastax.tika;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,9 +32,16 @@ public class Main {
 		// Do something here.
 		// For all docs
 
-		File[] files = new File("src/main/resources/files").listFiles();
+		List<File> files = listf("src/main/resources/files");
+		
 
+		
 		for (File file : files) {
+			if (file.isDirectory()){
+				continue;
+			}
+			
+			logger.info("Processing " + file.getAbsolutePath());
 			try {
 				MetadataObject metadata = service.processFile(file);
 				service.insertMetadataObject(metadata);
@@ -48,6 +56,24 @@ public class Main {
 		System.exit(0);
 	}
 
+	public static List<File> listf(String directoryName) {
+        File directory = new File(directoryName);
+
+        List<File> resultList = new ArrayList<File>();
+
+        // get all the files from a directory
+        File[] fList = directory.listFiles();
+        resultList.addAll(Arrays.asList(fList));
+        for (File file : fList) {
+            if (file.isFile()) {
+                System.out.println(file.getAbsolutePath());
+            } else if (file.isDirectory()) {
+                resultList.addAll(listf(file.getAbsolutePath()));
+            }
+        }
+        return resultList;
+    } 
+	
 	/**
 	 * @param args
 	 */

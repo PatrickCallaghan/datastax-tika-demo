@@ -41,6 +41,7 @@ public class MetadataObject {
 	@Column(name="content_type")
 	private String contentType;
 	
+	private String link;
 	private List<String> tags;
 	private String content;
 	
@@ -100,6 +101,12 @@ public class MetadataObject {
 	}
 	public void setMetadataMap(Map<String, String> metadataMap) {
 		this.metadataMap = metadataMap;
+	}
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
 	}
 	
 	
