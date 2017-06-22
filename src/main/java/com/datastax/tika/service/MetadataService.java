@@ -55,7 +55,7 @@ public class MetadataService {
 	        
 	        Map<String, String> metadataMap = new HashMap<String,String>();
 	        for (String name : metadata.names()){
-	        	metadataMap.put(name, metadata.get(name));   		        	
+	        	metadataMap.put("md_" + name, metadata.get(name));   		        	
 	        }
 	        metadataObject.setMetadataMap(metadataMap);
 	        logger.info(metadata.toString());
