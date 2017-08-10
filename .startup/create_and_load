@@ -13,7 +13,7 @@ sudo mvn clean compile exec:java -Dexec.mainClass="com.datastax.demo.SchemaSetup
 echo 'Creating Cores'
 sudo dsetool create_core tika.metadata generateResources=true
 
-echo 'Starting load data -> ~/loader.log'
+echo 'Starting load data -> /tmp/loader.log'
 sudo nohup mvn clean compile exec:java -Dexec.mainClass="com.datastax.tika.Main"  -DcontactPoints=node0 -DnoOfEvents=10000000 > /tmp/loader.log &
 
 sleep 2
