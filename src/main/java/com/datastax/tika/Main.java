@@ -37,36 +37,37 @@ public class Main {
 		// Do something here.
 		// For all docs
 
-//		List<File> files = listf("src/main/resources/files");
-//			
-//		for (File file : files) {
-//			if (file.isDirectory()){
-//				continue;
-//			}
-//			
-//			logger.info("Processing " + file.getAbsolutePath());
-//			try {
-//				MetadataObject metadata = service.processFile(file);
-//				service.insertMetadataObject(metadata);
-//			
-//			} catch (IOException | SAXException | TikaException e) {
-//				e.printStackTrace();
-//			}
-//		}
-
-		List<String> list = FileUtils.readFileIntoList("links.txt");
-		Set<String> set = new HashSet(list); //Remove duplicates
-		
-		for (String url : set){
+		List<File> files = listf("src/main/resources/files");
+			
+		for (File file : files) {
+			if (file.isDirectory()){
+				continue;
+			}
+			
+			logger.info("Processing " + file.getAbsolutePath());
 			try {
-				MetadataObject metadata = service.processLink(new URL(url));
+				MetadataObject metadata = service.processFile(file);
+				service.sendFile(file);
 				service.insertMetadataObject(metadata);
 			
-			} catch (IOException | SAXException | TikaException | URISyntaxException e) {
+			} catch (IOException | SAXException | TikaException e) {
 				e.printStackTrace();
-			} 
+			}
 		}
-		
+
+//		List<String> list = FileUtils.readFileIntoList("links.txt");
+//		Set<String> set = new HashSet(list); //Remove duplicates
+//		
+//		for (String url : set){
+//			try {
+//				MetadataObject metadata = service.processLink(new URL(url));
+//				service.insertMetadataObject(metadata);
+//			
+//			} catch (IOException | SAXException | TikaException | URISyntaxException e) {
+//				e.printStackTrace();
+//			} 
+//		}
+//		
 		timer.end();
 		logger.info("Test took " + timer.getTimeTakenSeconds() + " secs.");
 		System.exit(0);
