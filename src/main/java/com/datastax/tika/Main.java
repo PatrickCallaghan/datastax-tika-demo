@@ -2,20 +2,15 @@ package com.datastax.tika;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.datastax.demo.utils.FileUtils;
 import com.datastax.demo.utils.Timer;
 import com.datastax.tika.model.MetadataObject;
 import com.datastax.tika.service.MetadataService;
