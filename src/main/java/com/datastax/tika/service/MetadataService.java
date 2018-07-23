@@ -122,7 +122,7 @@ public class MetadataService {
 	
 	public void sendFile(File file){
 		
-	    String hdfsPath = "hdfs://localhost:5598";
+	    String hdfsPath = "dsefs://localhost:5598";
 
 	    Configuration conf = new Configuration();
 	    conf.set("fs.default.name", hdfsPath);
