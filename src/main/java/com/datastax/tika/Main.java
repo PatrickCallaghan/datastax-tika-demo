@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.datastax.demo.utils.PropertyHelper;
 import com.datastax.demo.utils.Timer;
 import com.datastax.tika.model.MetadataObject;
 import com.datastax.tika.service.MetadataService;
@@ -22,6 +23,8 @@ public class Main {
 
 	public Main() {
 
+		String fileLocation = PropertyHelper.getProperty("fileLocation", "src/main/resources/files");
+		
 		// Examples of using variables passed in using -DcontactPoints
 		MetadataService service = new MetadataService();
 
@@ -32,7 +35,7 @@ public class Main {
 		// Do something here.
 		// For all docs
 
-		List<File> files = listf("src/main/resources/files");
+		List<File> files = listf(fileLocation);
 			
 		for (File file : files) {
 			if (file.isDirectory()){

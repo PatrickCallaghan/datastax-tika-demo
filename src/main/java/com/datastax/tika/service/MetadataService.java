@@ -122,17 +122,17 @@ public class MetadataService {
 	
 	public void sendFile(File file){
 		
-	    String hdfsPath = "dsefs://localhost:5598";
-
-	    Configuration conf = new Configuration();
-	    conf.set("fs.default.name", hdfsPath);
-	    FileSystemOperations ops = new FileSystemOperations();
-	    
-	    try {
-			ops.addFile(file.getAbsolutePath(), file.getName(), conf);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//	    String hdfsPath = "dsefs://localhost:5598";
+//
+//	    Configuration conf = new Configuration();
+//	    conf.set("fs.default.name", hdfsPath);
+//	    FileSystemOperations ops = new FileSystemOperations();
+//	    
+//	    try {
+//			ops.addFile(file.getAbsolutePath(), file.getName(), conf);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 	
