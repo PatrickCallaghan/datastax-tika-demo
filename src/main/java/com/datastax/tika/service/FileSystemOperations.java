@@ -14,192 +14,194 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple Driver to read/write to hdfs
+ * 
  * @author ashrith
  *
  */
 public class FileSystemOperations {
-	
-  public FileSystemOperations() {
 
-  }
+	private static Logger logger = LoggerFactory.getLogger(FileSystemOperations.class);
 
-  /**
-   * create a existing file from local filesystem to hdfs
-   * @param source
-   * @param dest
-   * @param conf
-   * @throws IOException
-   */
-  public void addFile(String source, String dest, Configuration conf) throws IOException {
+	public FileSystemOperations() {
 
-    FileSystem fileSystem = FileSystem.get(conf);
+	}
 
-    // Get the filename out of the file path
-    String filename = source.substring(source.lastIndexOf('/') + 1,source.length());
+	/**
+	 * create a existing file from local filesystem to hdfs
+	 * 
+	 * @param source
+	 * @param dest
+	 * @param conf
+	 * @throws IOException
+	 */
+	public void addFile(String source, String dest, Configuration conf) throws IOException {
 
-    // Create the destination path including the filename.
-    if (dest.charAt(dest.length() - 1) != '/') {
-      dest = dest + "/" + filename;
-    } else {
-      dest = dest + filename;
-    }
+		FileSystem fileSystem = FileSystem.get(conf);
 
-    System.out.println("Adding file to " + dest);
+//		// Get the filename out of the file path
+//		String filename = source.substring(source.lastIndexOf('/') + 1, source.length());
+//
+//		// Create the destination path including the filename.
+//		if (dest.charAt(dest.length() - 1) != '/') {
+//			dest = dest + "/" + filename;
+//		} else {
+//			dest = dest + filename;
+//		}
 
-    // Check if the file already exists
-    Path path = new Path(dest);
-    
-    if (fileSystem.exists(path)) {
-      System.out.println("File " + dest + " already exists");
-      return;
-    }
+		logger.info("Adding " + source + " to " + dest);
 
-    // Create a new file and write data to it.
-    FSDataOutputStream out = fileSystem.create(path);
-    InputStream in = new BufferedInputStream(new FileInputStream(new File(
-        source)));
+		// Check if the file already exists
+		Path path = new Path(dest);
 
-    byte[] b = new byte[1024];
-    int numBytes = 0;
-    while ((numBytes = in.read(b)) > 0) {
-      out.write(b, 0, numBytes);
-    }
+		if (fileSystem.exists(path)) {
+			logger.info("File " + dest + " already exists");
+			return;
+		}
 
-    // Close all the file descriptors
-    in.close();
-    out.close();
-    fileSystem.close();
-  }
+		// Create a new file and write data to it.
+		FSDataOutputStream out = fileSystem.create(path);
+		InputStream in = new BufferedInputStream(new FileInputStream(new File(source)));
 
-  /**
-   * read a file from hdfs
-   * @param file
-   * @param conf
-   * @throws IOException
-   */
-  public void readFile(String file, Configuration conf) throws IOException {
-    FileSystem fileSystem = FileSystem.get(conf);
+		byte[] b = new byte[1024];
+		int numBytes = 0;
+		while ((numBytes = in.read(b)) > 0) {
+			out.write(b, 0, numBytes);
+		}
 
-    Path path = new Path(file);
-    if (!fileSystem.exists(path)) {
-      System.out.println("File " + file + " does not exists");
-      return;
-    }
+		// Close all the file descriptors
+		in.close();
+		out.close();
+		fileSystem.close();
+	}
 
-    FSDataInputStream in = fileSystem.open(path);
+	/**
+	 * read a file from hdfs
+	 * 
+	 * @param file
+	 * @param conf
+	 * @throws IOException
+	 */
+	public void readFile(String file, Configuration conf) throws IOException {
+		FileSystem fileSystem = FileSystem.get(conf);
 
-    String filename = file.substring(file.lastIndexOf('/') + 1,
-        file.length());
+		Path path = new Path(file);
+		if (!fileSystem.exists(path)) {
+			logger.info("File " + file + " does not exists");
+			return;
+		}
 
-    OutputStream out = new BufferedOutputStream(new FileOutputStream(
-        new File(filename)));
+		FSDataInputStream in = fileSystem.open(path);
 
-    byte[] b = new byte[1024];
-    int numBytes = 0;
-    while ((numBytes = in.read(b)) > 0) {
-      out.write(b, 0, numBytes);
-    }
+		String filename = file.substring(file.lastIndexOf('/') + 1, file.length());
 
-    in.close();
-    out.close();
-    fileSystem.close();
-  }
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(filename)));
 
-  /**
-   * delete a directory in hdfs
-   * @param file
-   * @throws IOException
-   */
-  public void deleteFile(String file, Configuration conf) throws IOException {
-    FileSystem fileSystem = FileSystem.get(conf);
+		byte[] b = new byte[1024];
+		int numBytes = 0;
+		while ((numBytes = in.read(b)) > 0) {
+			out.write(b, 0, numBytes);
+		}
 
-    Path path = new Path(file);
-    if (!fileSystem.exists(path)) {
-      System.out.println("File " + file + " does not exists");
-      return;
-    }
+		in.close();
+		out.close();
+		fileSystem.close();
+	}
 
-    fileSystem.delete(new Path(file), true);
+	/**
+	 * delete a directory in hdfs
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public void deleteFile(String file, Configuration conf) throws IOException {
+		FileSystem fileSystem = FileSystem.get(conf);
 
-    fileSystem.close();
-  }
+		Path path = new Path(file);
+		if (!fileSystem.exists(path)) {
+			logger.info("File " + file + " does not exists");
+			return;
+		}
 
-  /**
-   * create directory in hdfs
-   * @param dir
-   * @throws IOException
-   */
-  public void mkdir(String dir, Configuration conf) throws IOException {
-    FileSystem fileSystem = FileSystem.get(conf);
+		fileSystem.delete(new Path(file), true);
 
-    Path path = new Path(dir);
-    if (fileSystem.exists(path)) {
-      System.out.println("Dir " + dir + " already not exists");
-      return;
-    }
+		fileSystem.close();
+	}
 
-    fileSystem.mkdirs(path);
+	/**
+	 * create directory in hdfs
+	 * 
+	 * @param dir
+	 * @throws IOException
+	 */
+	public void mkdir(String dir, Configuration conf) throws IOException {
+		FileSystem fileSystem = FileSystem.get(conf);
 
-    fileSystem.close();
-  }
+		Path path = new Path(dir);
+		if (fileSystem.exists(path)) {
+			logger.info("Dir " + dir + " already not exists");
+			return;
+		}
 
-  public static void main(String[] args) throws IOException {
+		fileSystem.mkdirs(path);
 
-    if (args.length < 1) {
-      System.out.println("Usage: hdfsclient add/read/delete/mkdir"
-          + " [<local_path> <hdfs_path>]");
-      System.exit(1);
-    }
+		fileSystem.close();
+	}
 
-    FileSystemOperations client = new FileSystemOperations();
-    String hdfsPath = "dsefs://localhost:5598";
+	public static void main(String[] args) throws IOException {
 
-    Configuration conf = new Configuration();
-    conf.set("fs.default.name", hdfsPath);
+		if (args.length < 1) {
+			logger.info("Usage: hdfsclient add/read/delete/mkdir" + " [<local_path> <hdfs_path>]");
+			System.exit(1);
+		}
 
-    if (args[0].equals("add")) {
-      if (args.length < 3) {
-        System.out.println("Usage: hdfsclient add <local_path> "
-            + "<hdfs_path>");
-        System.exit(1);
-      }
+		FileSystemOperations client = new FileSystemOperations();
+		String hdfsPath = "dsefs://localhost:5598";
 
-      client.addFile(args[1], args[2], conf);
+		Configuration conf = new Configuration();
+		conf.set("fs.default.name", hdfsPath);
 
-    } else if (args[0].equals("read")) {
-      if (args.length < 2) {
-        System.out.println("Usage: hdfsclient read <hdfs_path>");
-        System.exit(1);
-      }
+		if (args[0].equals("add")) {
+			if (args.length < 3) {
+				logger.info("Usage: hdfsclient add <local_path> " + "<hdfs_path>");
+				System.exit(1);
+			}
 
-      client.readFile(args[1], conf);
+			client.addFile(args[1], args[2], conf);
 
-    } else if (args[0].equals("delete")) {
-      if (args.length < 2) {
-        System.out.println("Usage: hdfsclient delete <hdfs_path>");
-        System.exit(1);
-      }
+		} else if (args[0].equals("read")) {
+			if (args.length < 2) {
+				logger.info("Usage: hdfsclient read <hdfs_path>");
+				System.exit(1);
+			}
 
-      client.deleteFile(args[1], conf);
+			client.readFile(args[1], conf);
 
-    } else if (args[0].equals("mkdir")) {
-      if (args.length < 2) {
-        System.out.println("Usage: hdfsclient mkdir <hdfs_path>");
-        System.exit(1);
-      }
+		} else if (args[0].equals("delete")) {
+			if (args.length < 2) {
+				logger.info("Usage: hdfsclient delete <hdfs_path>");
+				System.exit(1);
+			}
 
-      client.mkdir(args[1], conf);
+			client.deleteFile(args[1], conf);
 
-    } else {
-      System.out.println("Usage: hdfsclient add/read/delete/mkdir"
-          + " [<local_path> <hdfs_path>]");
-      System.exit(1);
-    }
+		} else if (args[0].equals("mkdir")) {
+			if (args.length < 2) {
+				logger.info("Usage: hdfsclient mkdir <hdfs_path>");
+				System.exit(1);
+			}
 
-    System.out.println("Done!");
-  }
+			client.mkdir(args[1], conf);
+
+		} else {
+			logger.info("Usage: hdfsclient add/read/delete/mkdir" + " [<local_path> <hdfs_path>]");
+			System.exit(1);
+		}
+
+		logger.info("Done!");
+	}
 }

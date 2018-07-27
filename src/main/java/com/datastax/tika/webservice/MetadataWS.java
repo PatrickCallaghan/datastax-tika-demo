@@ -22,7 +22,7 @@ public class MetadataWS {
 	private SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	//Service Layer.
-	private MetadataService service = new MetadataService();
+	private MetadataService service = new MetadataService("");
 	
 	@GET
 	@Path("/get/keyspaces")

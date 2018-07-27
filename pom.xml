@@ -10,6 +10,16 @@
 
 	<dependencies>
 		<dependency>
+    		<groupId>com.datastax</groupId>
+    		<artifactId>byos</artifactId>
+    		<version>1.0</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.datastax</groupId>
+    		<artifactId>scala-library</artifactId>
+    		<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.datastax.dse</groupId>
 			<artifactId>dse-java-driver-core</artifactId>
 			<version>1.4.0</version>

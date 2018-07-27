@@ -2,15 +2,20 @@ package com.datastax.tika;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.datastax.demo.utils.FileUtils;
 import com.datastax.demo.utils.PropertyHelper;
 import com.datastax.demo.utils.Timer;
 import com.datastax.tika.model.MetadataObject;
@@ -26,19 +31,48 @@ public class Main {
 		String fileLocation = PropertyHelper.getProperty("fileLocation", "src/main/resources/files");
 		
 		// Examples of using variables passed in using -DcontactPoints
-		MetadataService service = new MetadataService();
+		MetadataService service = new MetadataService(fileLocation);
 
 		logger.info("Paring Documents");
 
 		Timer timer = new Timer();
 
 		// Do something here.
-		// For all docs
+		// For all docs			
+		processFiles(service, fileLocation);
 
-		List<File> files = listf(fileLocation);
+		//processLinks(service);
+		
+		timer.end();
+		logger.info("Test took " + timer.getTimeTakenSeconds() + " secs.");
+		System.exit(0);
+	}
+
+	private void processLinks(MetadataService service) {
+		List<String> list = FileUtils.readFileIntoList("links.txt");
+		Set<String> set = new HashSet(list); //Remove duplicates
+		
+		for (String url : set){
+			try {
+				MetadataObject metadata = service.processLink(new URL(url));
+				service.insertMetadataObject(metadata);
 			
+			} catch (IOException | SAXException | TikaException | URISyntaxException e) {
+				e.printStackTrace();
+			} 
+		}
+	}
+
+	private void processFiles(MetadataService service, String fileLocation) {
+		List<File> files = listf(fileLocation);
+		
+		List<File> dirs = new ArrayList<File>();
+		
 		for (File file : files) {
 			if (file.isDirectory()){
+				dirs.add(file);
+				
+				service.mkdir(file);
 				continue;
 			}
 			
@@ -52,23 +86,10 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-
-//		List<String> list = FileUtils.readFileIntoList("links.txt");
-//		Set<String> set = new HashSet(list); //Remove duplicates
-//		
-//		for (String url : set){
-//			try {
-//				MetadataObject metadata = service.processLink(new URL(url));
-//				service.insertMetadataObject(metadata);
-//			
-//			} catch (IOException | SAXException | TikaException | URISyntaxException e) {
-//				e.printStackTrace();
-//			} 
-//		}
-//		
-		timer.end();
-		logger.info("Test took " + timer.getTimeTakenSeconds() + " secs.");
-		System.exit(0);
+		
+		for (File dir : dirs){
+			processFiles(service, dir.getAbsolutePath());
+		}
 	}
 
 	public static List<File> listf(String directoryName) {

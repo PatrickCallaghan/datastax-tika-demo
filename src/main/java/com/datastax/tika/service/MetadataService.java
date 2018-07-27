@@ -3,7 +3,6 @@ package com.datastax.tika.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -13,18 +12,8 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -41,11 +30,15 @@ import com.datastax.tika.model.MetadataObject;
 public class MetadataService {
 	private static Logger logger = LoggerFactory.getLogger(MetadataService.class);
 	private MetadataDao dao;
-	private CloseableHttpClient httpClient = HttpClients.createDefault();
+    private FileSystemOperations ops = new FileSystemOperations();
 
-	public MetadataService() {		
+	private CloseableHttpClient httpClient = HttpClients.createDefault();
+	private String startLocation;
+
+	public MetadataService(String startLocation) {		
 		String contactPointsStr = PropertyHelper.getProperty("contactPoints", "localhost");
 		this.dao = new MetadataDao(contactPointsStr.split(","));
+		this.startLocation = startLocation;
 	}	
 	
 	public List<KeyspaceMetadata> getKeyspaces() {
@@ -120,23 +113,36 @@ public class MetadataService {
 	    return metadataObject;
 	}
 	
-	public void sendFile(File file){
+	public void sendFile(File source) {
 		
-//	    String hdfsPath = "dsefs://localhost:5598";
-//
-//	    Configuration conf = new Configuration();
-//	    conf.set("fs.default.name", hdfsPath);
-//	    FileSystemOperations ops = new FileSystemOperations();
-//	    
-//	    try {
-//			ops.addFile(file.getAbsolutePath(), file.getName(), conf);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+	    	    
+	    try {
+			ops.addFile(source.getAbsolutePath(), source.getAbsolutePath().substring(this.startLocation.length()), getConf());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
 	public void insertMetadataObject(MetadataObject metadata){		
 		dao.saveMetadataObject(metadata);
+	}
+
+	public void mkdir(File file) {
+		try {
+			ops.mkdir(file.getAbsolutePath().substring(this.startLocation.length()), getConf());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Configuration getConf(){
+	    String hdfsPath = "dsefs://localhost:5598";
+
+	    Configuration conf = new Configuration();
+	    conf.set("fs.defaultFS", hdfsPath);
+	    conf.set("fs.dsefs.impl", "com.datastax.bdp.fs.hadoop.DseFileSystem");
+
+	    return conf;
 	}
 }

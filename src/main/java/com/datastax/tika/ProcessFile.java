@@ -2,8 +2,6 @@ package com.datastax.tika;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
@@ -17,11 +15,13 @@ import com.datastax.tika.service.MetadataService;
 public class ProcessFile {
 
 	private static Logger logger = LoggerFactory.getLogger(ProcessFile.class);
+	private MetadataService service;
+	
+	ProcessFile (MetadataService service){
+		this.service = service;
+	}
 
 	public ProcessFile(String filename) {
-
-		// Examples of using variables passed in using -DcontactPoints
-		MetadataService service = new MetadataService();
 
 		logger.info("Paring Documents");
 		File file = new File(filename);
@@ -31,7 +31,7 @@ public class ProcessFile {
 		logger.info("Processing " + file.getAbsolutePath());
 		try {
 			MetadataObject metadata = service.processFile(file);
-			//service.sendFile(file);
+			service.sendFile(file);
 			service.insertMetadataObject(metadata);
 
 		} catch (IOException | SAXException | TikaException e) {
