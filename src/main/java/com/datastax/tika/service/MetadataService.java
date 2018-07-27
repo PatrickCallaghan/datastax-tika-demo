@@ -113,11 +113,12 @@ public class MetadataService {
 	    return metadataObject;
 	}
 	
-	public void sendFile(File source) {
+	public void sendFile(File source, MetadataObject metadata) {
 		
 	    	    
 	    try {
 			ops.addFile(source.getAbsolutePath(), source.getAbsolutePath().substring(this.startLocation.length()), getConf());
+			metadata.setLink(source.getAbsolutePath().substring(this.startLocation.length() + 1));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -55,13 +55,13 @@ public class FileSystemOperations {
 
 		logger.info("Adding " + source + " to " + dest);
 
-		// Check if the file already exists
+//		// Check if the file already exists
 		Path path = new Path(dest);
-
-		if (fileSystem.exists(path)) {
-			logger.info("File " + dest + " already exists");
-			return;
-		}
+//
+//		if (fileSystem.exists(path)) {
+//			logger.info("File " + dest + " already exists");
+//			return;
+//		}
 
 		// Create a new file and write data to it.
 		FSDataOutputStream out = fileSystem.create(path);
@@ -143,10 +143,11 @@ public class FileSystemOperations {
 
 		Path path = new Path(dir);
 		if (fileSystem.exists(path)) {
-			logger.info("Dir " + dir + " already not exists");
+			logger.info("Dir " + dir + " already exists");
 			return;
 		}
 
+		logger.info("********************** Creating path " + path.getName() + " ********************** ");
 		fileSystem.mkdirs(path);
 
 		fileSystem.close();

@@ -33,7 +33,7 @@ public class Main {
 		// Examples of using variables passed in using -DcontactPoints
 		MetadataService service = new MetadataService(fileLocation);
 
-		logger.info("Paring Documents");
+		logger.info("Parsing Documents");
 
 		Timer timer = new Timer();
 
@@ -50,7 +50,7 @@ public class Main {
 
 	private void processLinks(MetadataService service) {
 		List<String> list = FileUtils.readFileIntoList("links.txt");
-		Set<String> set = new HashSet(list); //Remove duplicates
+		Set<String> set = new HashSet<String>(list); //Remove duplicates
 		
 		for (String url : set){
 			try {
@@ -69,9 +69,13 @@ public class Main {
 		List<File> dirs = new ArrayList<File>();
 		
 		for (File file : files) {
+			if (file.getName().startsWith(".")){
+				logger.warn("Ignoring " + file.getAbsolutePath());
+				continue;
+			}
+			
 			if (file.isDirectory()){
-				dirs.add(file);
-				
+				dirs.add(file);				
 				service.mkdir(file);
 				continue;
 			}
@@ -79,7 +83,7 @@ public class Main {
 			logger.info("Processing " + file.getAbsolutePath());
 			try {
 				MetadataObject metadata = service.processFile(file);
-				service.sendFile(file);
+				service.sendFile(file, metadata);
 				service.insertMetadataObject(metadata);
 			
 			} catch (IOException | SAXException | TikaException e) {
